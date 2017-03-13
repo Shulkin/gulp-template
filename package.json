@@ -17,7 +17,7 @@
     "url": "git+https://github.com/Shulkin/gulp-template.git"
   },
   "author": "Evgeny Shulkin <evgeny.shulkin@gmail.com>",
-  "license": "ISC",
+  "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/Shulkin/gulp-template/issues"
   },
