@@ -1,0 +1,19 @@
+{
+  "name": "gulp-template",
+  "version": "1.0.0",
+  "description": "Simple frontend environment using Gulp, Browsersync and Browserify",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Shulkin/gulp-template.git"
+  },
+  "author": "Evgeny Shulkin <evgeny.shulkin@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Shulkin/gulp-template/issues"
+  },
+  "homepage": "https://github.com/Shulkin/gulp-template#readme"
+}
