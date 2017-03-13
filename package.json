@@ -6,6 +6,12 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "keywords": [
+    "gulp",
+    "browsersync",
+    "browserify",
+    "template"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Shulkin/gulp-template.git"
