@@ -20,21 +20,27 @@ gulp.task("sass", function() {
   // take all scss/sass files from src/sass folder and all subfolders
   return gulp.src("src/sass/**/*.+(scss|sass)")
     .pipe(sass().on("error", sass.logError)) // transform to css with gulp-sass plugin
-    // add autoprefixes for old browsers
+    .pipe(gulp.dest("src/css")); // output to css folder
+});
+// concatenate and minify css
+gulp.task("css", ["sass"], function() {
+  // wait for sass task to end first
+  return gulp.src("src/css/**/*.css")
+    // create autoprefixes for old browsers
     .pipe(autoprefixer(["last 15 versions", "> 1%", "ie 8", "ie 7"], {cascade: true}))
     .pipe(concat("style.min.css")) // concatenate to one file
     .pipe(cssnano()) // minify output file
-    .pipe(gulp.dest("dist/css")) // output to dist folder
-    .pipe(browserSync.reload({stream: true})) // reload page
-});
+    .pipe(gulp.dest("src/css")) // output to css folder
+    .pipe(browserSync.reload({stream: true})); // reload page
+})
 // browserify javascript in one bundle
 gulp.task("js", function() {
   // main entry point to application
   return browserify("src/js/app.js")
     .bundle() // bundle in one file
     .pipe(sourceStream("bundle.js"))
-    .pipe(gulp.dest("dist/js")) // output to dist folder
-    .pipe(browserSync.reload({stream: true})) // reload page
+    .pipe(gulp.dest("src/js")) // output to js folder
+    .pipe(browserSync.reload({stream: true})); // reload page
 });
 // copy index.html and favicon to dist
 /*
@@ -47,16 +53,16 @@ gulp.task("html", function() {
 // watch files for changes
 gulp.task("watch", function() {
   // reload browser page on change via browser-sync
-  gulp.watch("src/sass/**/*.+(scss|sass)", ["sass"]);
+  gulp.watch("src/sass/**/*.+(scss|sass)", ["sass", "css"]);
   gulp.watch("src/js/**/*.js", ["js"]);
-  gulp.watch("src/*.html", ["html"])
+  gulp.watch("src/*.html", browserSync.reload()) // watch for index.html
 });
 // configure browser-sync task
 gulp.task("browser-sync", function() {
   browserSync({
     server: {
       // start server in dist folder
-      baseDir: "dist"
+      baseDir: "src"
     },
     // disable notifications
     notify: false
