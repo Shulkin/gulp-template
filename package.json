@@ -6,8 +6,7 @@
   "scripts": {
     "dev": "gulp watch",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "gulp build",
-    "start": "node server.js"
+    "build": "gulp build"
   },
   "keywords": [
     "gulp",
