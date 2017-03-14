@@ -4,7 +4,10 @@
   "description": "Simple frontend environment using Gulp, Browsersync and Browserify",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "gulp watch",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "gulp build",
+    "start": "node server.js"
   },
   "keywords": [
     "gulp",
@@ -21,6 +24,10 @@
   "bugs": {
     "url": "https://github.com/Shulkin/gulp-template/issues"
   },
+  "browserslist": [
+    "> 1%",
+    "last 10 versions"
+  ],
   "homepage": "https://github.com/Shulkin/gulp-template#readme",
   "devDependencies": {
     "browser-sync": "^2.18.8",

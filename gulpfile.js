@@ -11,60 +11,62 @@ var sourceStream = require("vinyl-source-stream");
 gulp.task("clean", function() {
   return del.sync("dist");
 });
-// transform sass/scss to css
-gulp.task("sass", function() {
-  /*
-   * +(png|jpeg|gif) - glob pattern for multiple file extension
-   * {png,jpeg,gif} - this works too
-   */
-  // take all scss/sass files from src/sass folder and all subfolders
-  return gulp.src("src/sass/**/*.+(scss|sass)")
-    .pipe(sass().on("error", sass.logError)) // transform to css with gulp-sass plugin
-    .pipe(gulp.dest("src/css")); // output to css folder
-});
-// concatenate and minify css
-gulp.task("css", ["sass"], function() {
-  // wait for sass task to end first
-  return gulp.src("src/css/**/*.css")
-    // create autoprefixes for old browsers
-    .pipe(autoprefixer(["last 15 versions", "> 1%", "ie 8", "ie 7"], {cascade: true}))
-    .pipe(concat("style.min.css")) // concatenate to one file
-    .pipe(cssnano()) // minify output file
-    .pipe(gulp.dest("src/css")) // output to css folder
-    .pipe(browserSync.reload({stream: true})); // reload page
-})
-// browserify javascript in one bundle
-gulp.task("js", function() {
-  // main entry point to application
-  return browserify("src/js/app.js")
-    .bundle() // bundle in one file
-    .pipe(sourceStream("bundle.js"))
-    .pipe(gulp.dest("src/js")) // output to js folder
-    .pipe(browserSync.reload({stream: true})); // reload page
-});
-// copy index.html and favicon to dist
-/*
-gulp.task("html", function() {
-  return gulp.src("src/*.+(html|ico)")
-    .pipe(gulp.dest("dist")) // simply copy to dist
-    .pipe(browserSync.reload({stream: true})) // reload page
-});
-*/
-// watch files for changes
-gulp.task("watch", function() {
-  // reload browser page on change via browser-sync
-  gulp.watch("src/sass/**/*.+(scss|sass)", ["sass", "css"]);
-  gulp.watch("src/js/**/*.js", ["js"]);
-  gulp.watch("src/*.html", browserSync.reload()) // watch for index.html
-});
-// configure browser-sync task
+// configure Browsersync task
 gulp.task("browser-sync", function() {
   browserSync({
-    server: {
-      // start server in dist folder
-      baseDir: "src"
-    },
+    // start dev server in app folder
+    server: {baseDir: "app"},
     // disable notifications
     notify: false
   })
 });
+// transform scss to css
+gulp.task("scss", function() {
+  // take files from folder and all subfolders
+  return gulp.src("app/scss/**/*.{scss,sass}")
+    // transform to css with gulp-sass plugin
+    .pipe(sass().on("error", sass.logError))
+    .pipe(gulp.dest("app/css")); // output to css folder
+});
+// concatenate and minify css
+gulp.task("css", ["scss"], function() {
+  // wait for scss task to end first
+  return gulp.src("app/css/**/*.css")
+    // add autoprefixes for old browsers
+    .pipe(autoprefixer()) // list of browsers in package.json
+    .pipe(concat("style.min.css")) // concatenate to one file
+    .pipe(cssnano()) // minify output file
+    .pipe(gulp.dest("src/css")) // output to css folder
+    .pipe(browserSync.reload({stream: true})); // reload page
+});
+// browserify javascript in one bundle
+gulp.task("js", function() {
+  // main entry point to application
+  return browserify("app/js/app.js")
+    .bundle() // bundle in one file
+    .pipe(sourceStream("bundle.js"))
+    .pipe(gulp.dest("app/js")) // output to js folder
+    .pipe(browserSync.reload({stream: true})); // reload page
+});
+// watch files for changes
+gulp.task("watch", ["browser-sync", "scss", "css", "js"], function() {
+  // reload browser page on change via Browsersync
+  gulp.watch("app/scss/**/*.{scss,sass}", ["scss", "css"]);
+  gulp.watch("app/js/**/*.js", ["js"]);
+  gulp.watch("app/*.html", browserSync.reload()) // watch for index.html
+});
+gulp.task("build", ["clean", "scss", "css", "js"], function() {
+  // copy minified css to build folder
+  var buildCss = gulp.src([
+    "app/css/style.min.css"
+  ]).pipe(gulp.dest("dist/css"));
+  // copy javascript bundle
+  var buildJs = gulp.src([
+    "app/js/bundle.js"
+  ]).pipe(gulp.dest("dist/js"));
+  // copy index.html
+  var buildHtml = gulp.src([
+    "app/*.html"
+  ]).pipe(gulp.dest("dist"));
+});
+gulp.task("default", ["watch"]);
