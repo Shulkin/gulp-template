@@ -13,7 +13,8 @@
     "gulp",
     "browsersync",
     "browserify",
-    "template"
+    "template",
+    "starter"
   ],
   "repository": {
     "type": "git",

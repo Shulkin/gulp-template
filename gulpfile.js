@@ -16,6 +16,8 @@ gulp.task("browser-sync", function() {
   browserSync({
     // start dev server in app folder
     server: {baseDir: "app"},
+    // default port
+    port: 3001,
     // disable notifications
     notify: false
   })
@@ -26,7 +28,8 @@ gulp.task("scss", function() {
   return gulp.src("app/scss/**/*.{scss,sass}")
     // transform to css with gulp-sass plugin
     .pipe(sass().on("error", sass.logError))
-    .pipe(gulp.dest("app/css")); // output to css folder
+    .pipe(gulp.dest("app/css")) // output to css folder
+    .pipe(browserSync.reload({stream: true})); // reload page
 });
 // concatenate and minify css
 gulp.task("css", ["scss"], function() {
@@ -36,7 +39,7 @@ gulp.task("css", ["scss"], function() {
     .pipe(autoprefixer()) // list of browsers in package.json
     .pipe(concat("style.min.css")) // concatenate to one file
     .pipe(cssnano()) // minify output file
-    .pipe(gulp.dest("src/css")) // output to css folder
+    .pipe(gulp.dest("app/css")) // output to css folder
     .pipe(browserSync.reload({stream: true})); // reload page
 });
 // browserify javascript in one bundle
@@ -53,7 +56,8 @@ gulp.task("watch", ["browser-sync", "scss", "css", "js"], function() {
   // reload browser page on change via Browsersync
   gulp.watch("app/scss/**/*.{scss,sass}", ["scss", "css"]);
   gulp.watch("app/js/**/*.js", ["js"]);
-  gulp.watch("app/*.html", browserSync.reload()) // watch for index.html
+  // watch for index.html
+  gulp.watch("app/*.html", browserSync.reload);
 });
 gulp.task("build", ["clean", "scss", "css", "js"], function() {
   // copy minified css to build folder
