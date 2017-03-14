@@ -11,6 +11,10 @@ var sourceStream = require("vinyl-source-stream");
 gulp.task("clean", function() {
   return del.sync("dist");
 });
+// clean css folder
+gulp.task("clean:css", function() {
+  return del.sync("app/css");
+});
 // configure Browsersync task
 gulp.task("browser-sync", function() {
   browserSync({
@@ -23,7 +27,7 @@ gulp.task("browser-sync", function() {
   })
 });
 // transform scss to css
-gulp.task("scss", function() {
+gulp.task("scss", ["clean:css"], function() {
   // take files from folder and all subfolders
   return gulp.src("app/scss/**/*.{scss,sass}")
     // transform to css with gulp-sass plugin
@@ -54,8 +58,9 @@ gulp.task("js", function() {
 // watch files for changes
 gulp.task("watch", ["browser-sync", "scss", "css", "js"], function() {
   // reload browser page on change via Browsersync
-  gulp.watch("app/scss/**/*.{scss,sass}", ["scss", "css"]);
-  gulp.watch("app/js/**/*.js", ["js"]);
+  gulp.watch("app/scss/**/*.{scss,sass}", ["clean:css", "scss", "css"]);
+  // exclude bundle.js from watch
+  gulp.watch(["app/js/**/*.js", "!app/js/bundle.js"], ["js"]);
   // watch for index.html
   gulp.watch("app/*.html", browserSync.reload);
 });

@@ -2,3 +2,14 @@ $primary-color: red;
 h1 {
   color: $primary-color;
 }
+@mixin rounded_corners ($radius) {
+  border-radius: $radius;
+}
+p#lorem {
+  display: none;
+  width: 300px;
+  height: auto;
+  padding: 10px;
+  border: 1px solid grey;
+  @include rounded_corners(14px);
+}
